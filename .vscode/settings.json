@@ -1,0 +1,6 @@
+{
+    "terminal.integrated.env.linux": {
+        "PATH": "/home/quantumlove/.platformio/penv/bin:/home/quantumlove/.platformio/penv:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/home/quantumlove/Documents/Qt/build-dio-Desktop_Qt_5_13_0_GCC_64bit-Release",
+        "PLATFORMIO_CALLER": "vscode"
+    }
+}
