@@ -47,8 +47,6 @@ class LED {
     
 };
 
-int steps = 0;
-
 class Control {
   protected:
     int ord;
@@ -60,11 +58,9 @@ class Control {
     Control(int value, int target){
       if (target <= value){
         this->ord = 1;
-        steps += value - target;
       }
       else {
         this->ord = 0;
-        steps += target - value;
       }
       this->val = value;
       this->target = target;
@@ -179,9 +175,7 @@ void setup() {
   Green.set(0);
   Blue.set(0);
 
-  transition(&Red, 7);
-  delay(3000);
-  transition(&Red, 0);
+  changeColor(4, 0 , 7);
 }
 
 void loop() {
