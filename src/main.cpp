@@ -36,50 +36,6 @@ class LED {
       this->intensity = in;
     }
 
-    void transition(int value){
-      if (this->intensity >= value){
-        for (int i = this->intensity; i >= value; i--){
-          if (i == value){
-            this->intensity = i;
-          }
-
-          if (Serial.available() > 0){
-            String data = Serial.readString();
-
-            if (data.charAt(0) == 's'){
-              this->intensity = i;
-              Serial.print(i);
-              break;
-            }
-          }
-          
-          analogWrite(this->pin, i);
-          delay(delayTime);
-        }
-      }
-
-      else {
-        for (int i = this->intensity; i <= value; i++){
-          if (i == value){
-            this->intensity = i;
-          }
-
-          if (Serial.available() > 0){
-            String data = Serial.readString();
-
-            if (data.charAt(0) == 's'){
-              this->intensity = i;
-              Serial.print(i);
-              break;
-            }
-          }
-          
-          analogWrite(this->pin, i);
-          delay(delayTime);
-        }
-      }
-    }
-
     void init(){
       pinMode(this->pin, OUTPUT);
     }
@@ -143,7 +99,19 @@ LED Red('R', Rlight);
 LED Green ('G', Glight);
 LED Blue ('B', Blight);
 
+void checkSerial(LED *led){
+  if (Serial.available() > 0){
+    String data = Serial.readString();
+
+    if (data.charAt(0) == 's'){
+      Serial.print(led->getIntensity());
+    }
+  }
+}
+
 void checkRGB(Control *obj, LED *led){
+
+  checkSerial(led);
 
   if (obj->getOrd() == 1){
     if (obj->getVal() == obj->getTarget()){
@@ -165,6 +133,16 @@ void checkRGB(Control *obj, LED *led){
       led->set(obj->getVal());
       obj->increment();
     }
+  }
+}
+
+void transition(LED *led, int val){
+  Control Cled(led->getIntensity(), val);
+
+  while (Cled.going){
+    checkRGB(&Cled, led);
+
+    delay(LED::delayTime);
   }
 }
 
@@ -200,6 +178,10 @@ void setup() {
   Red.set(0);
   Green.set(0);
   Blue.set(0);
+
+  transition(&Red, 7);
+  delay(3000);
+  transition(&Red, 0);
 }
 
 void loop() {
@@ -216,26 +198,18 @@ void loop() {
     int value = incoming.substring(1, sizeof(incoming)).toInt();
     
     if (adress == '5'){
-      Blue.transition(value);
-      Red.transition(0);
-      Green.transition(0);
+      changeColor(0, 0, value);
     }
     if (adress == '4'){
-      Blue.transition(0);
-      Red.transition(value);
-      Green.transition(0);
+      changeColor(value, 0, 0);
     }
 
     if (adress == '3'){
-      Blue.transition(0);
-      Red.transition(0);
-      Green.transition(value);
+      changeColor(0, value, 0);
     }
 
     if (adress == '6'){
-      Blue.transition(random(0, LED::bright));
-      Red.transition(random(0, LED::bright));
-      Green.transition(random(0, LED::bright));
+      changeColor(random(0, LED::bright), random(0, LED::bright), random(0, LED::bright));
       Serial.print(Red.getIntensity());
       delay(100);
       Serial.print(Green.getIntensity());
@@ -244,15 +218,15 @@ void loop() {
     }
 
     if (adress == '7'){
-      Red.transition(value);
+      transition(&Red, value);
     }
 
     if (adress == '8'){
-      Green.transition(value);
+      transition(&Green, value);
     }
 
     if (adress == '9'){
-      Blue.transition(value);
+      transition(&Blue, value);
     }
 
     if (adress == 'b'){
