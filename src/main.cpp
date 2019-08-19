@@ -204,11 +204,9 @@ void loop() {
 
     if (adress == '6'){
       changeColor(random(0, LED::bright), random(0, LED::bright), random(0, LED::bright));
-      Serial.print(Red.getIntensity());
-      delay(100);
-      Serial.print(Green.getIntensity());
-      delay(100);
-      Serial.print(Blue.getIntensity());
+      String mes = (String)Red.getIntensity() + "#" + (String)Green.getIntensity() + "#" + (String)Blue.getIntensity() + "#";
+      String sen = (String)mes.length() +  mes;
+      Serial.print(sen);
     }
 
     if (adress == '7'){
